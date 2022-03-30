@@ -15,7 +15,7 @@ jobs:
     name: Build Single-File Artifact
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: set-vars
         uses: actions/github-script@v5
         with:
@@ -46,7 +46,7 @@ jobs:
     name: Build - Windows .NET Framework Zip
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.x
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'SamboyCoding/Cpp2IL'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.x
