@@ -22,7 +22,7 @@ jobs:
           script: |
             core.setOutput("extension", "${{ matrix.runtimeIdentifier}}" === "win-x64" ? ".exe" : "");
             core.setOutput("extraArgs", "${{ matrix.project}}" === "Cpp2IL.Gui" ? "/p:BuiltInComInteropSupport=true" : "");
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.x
       - id: git-vars
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.x
       - name: Configure nuget repo
@@ -70,7 +70,7 @@ jobs:
     if: github.repository == 'SamboyCoding/Cpp2IL'
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.x
       - id: set-vars
