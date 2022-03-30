@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set-vars
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           script: |
             core.setOutput("extension", "${{ matrix.runtimeIdentifier}}" === "win-x64" ? ".exe" : "");
