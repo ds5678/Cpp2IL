@@ -22,10 +22,11 @@ public class CallAnalysisProcessingLayer : Cpp2IlProcessingLayer
 
     public override void Process(ApplicationAnalysisContext appContext, Action<int, int>? progressCallback = null)
     {
-        InjectAttribute(appContext);
+        var nativePassthrough = appContext.GetExtraData<string>("call-analysis-native-passthrough") is not null;
+        InjectAttribute(appContext, nativePassthrough);
     }
 
-    private static void InjectAttribute(ApplicationAnalysisContext appContext)
+    private static void InjectAttribute(ApplicationAnalysisContext appContext, bool nativePassthrough)
     {
         const string Namespace = "Cpp2ILInjected.CallAnalysis";
 
@@ -43,8 +44,8 @@ public class CallAnalysisProcessingLayer : Cpp2IlProcessingLayer
         Dictionary<ulong, int> callCounts = new();
         Dictionary<MethodAnalysisContext, int> unknownCalls = new();
         Dictionary<MethodAnalysisContext, int> deduplicatedCalls = new();
-        Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> callsDictionary = new();
-        Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> calledByDictionary = new();
+        Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> callsDictionaryInitial = new();
+        Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> calledByDictionaryInitial = new();
 
         var keyFunctionAddresses = appContext.GetOrCreateKeyFunctionAddresses();
 
@@ -103,8 +104,8 @@ public class CallAnalysisProcessingLayer : Cpp2IlProcessingLayer
                             }
                             else if (TryGetCommonMethodFromList(list, out var calledMethod))
                             {
-                                Add(callsDictionary, m, calledMethod);
-                                Add(calledByDictionary, calledMethod, m);
+                                Add(callsDictionaryInitial, m, calledMethod);
+                                Add(calledByDictionaryInitial, calledMethod, m);
                             }
                             else
                             {
@@ -124,6 +125,31 @@ public class CallAnalysisProcessingLayer : Cpp2IlProcessingLayer
             }
         }
 
+        Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> callsDictionaryFinal;
+        Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> calledByDictionaryFinal;
+        if (nativePassthrough)
+        {
+            var totalCallsInitial = Count(callsDictionaryInitial);
+            var totalCalledByInitial = Count(calledByDictionaryInitial);
+
+            calledByDictionaryFinal = new();
+            FillDictionaryForNativePassthrough(calledByDictionaryInitial, calledByDictionaryFinal, null);
+            calledByDictionaryInitial = null!;//Free memory
+
+            var totalCalledByFinal = Count(calledByDictionaryFinal);
+
+            callsDictionaryFinal = new();
+            FillDictionaryForNativePassthrough(callsDictionaryInitial, callsDictionaryFinal, unknownCalls);
+            callsDictionaryInitial = null!;//Free memory
+
+            var totalCallsFinal = Count(callsDictionaryFinal);
+        }
+        else
+        {
+            callsDictionaryFinal = callsDictionaryInitial;
+            calledByDictionaryFinal = calledByDictionaryInitial;
+        }
+
         foreach (var assemblyAnalysisContext in appContext.Assemblies)
         {
             var callerCountAttributeInfo = callerCountAttributes[assemblyAnalysisContext];
@@ -138,7 +164,7 @@ public class CallAnalysisProcessingLayer : Cpp2IlProcessingLayer
                     continue;
 
                 var unknownCallCount = unknownCalls.GetOrDefault(m, 0);
-                if (calledByDictionary.TryGetValue(m, out var calledByList) && calledByList.Count < MaximumCalledByAttributes)
+                if (calledByDictionaryFinal.TryGetValue(m, out var calledByList) && calledByList.Count < MaximumCalledByAttributes)
                 {
                     foreach (var callingMethod in calledByList)
                     {
@@ -147,7 +173,7 @@ public class CallAnalysisProcessingLayer : Cpp2IlProcessingLayer
                 }
 
                 AttributeInjectionUtils.AddOneParameterAttribute(m, callerCountAttributeInfo, callCounts.GetOrDefault(m.UnderlyingPointer, 0));
-                if (callsDictionary.TryGetValue(m, out var callsList))
+                if (callsDictionaryFinal.TryGetValue(m, out var callsList))
                 {
                     foreach (var calledMethod in callsList)
                     {
@@ -318,6 +344,48 @@ public class CallAnalysisProcessingLayer : Cpp2IlProcessingLayer
         }
     }
 
+    private static void FillDictionaryForNativePassthrough(Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> initial, Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> final, Dictionary<MethodAnalysisContext, int>? unknownCalls)
+    {
+        foreach ((var method, var initialHashset) in initial)
+        {
+            if (method is not NativeMethodAnalysisContext)
+            {
+                HashSet<MethodAnalysisContext> cache = new();
+                HashSet<MethodAnalysisContext> finalHashset = new();
+                foreach (var referencedMethod in initialHashset)
+                {
+                    AddNonNativeReferences(method, referencedMethod, initial, finalHashset, cache, unknownCalls);
+                }
+                final.Add(method, finalHashset);
+            }
+        }
+    }
+
+    private static void AddNonNativeReferences(MethodAnalysisContext referencingMethod, MethodAnalysisContext referencedMethod, Dictionary<MethodAnalysisContext, HashSet<MethodAnalysisContext>> initial, HashSet<MethodAnalysisContext> hashset, HashSet<MethodAnalysisContext> cache, Dictionary<MethodAnalysisContext, int>? unknownCalls)
+    {
+        if (referencedMethod is not NativeMethodAnalysisContext)
+        {
+            hashset.Add(referencedMethod);
+        }
+
+        if (!cache.Add(referencedMethod))
+        {
+            return;
+        }
+
+        if (initial.TryGetValue(referencedMethod, out var list))
+        {
+            foreach (var method in list)
+            {
+                AddNonNativeReferences(referencingMethod, method, initial, hashset, cache, unknownCalls);
+            }
+        }
+        else if (unknownCalls is not null)
+        {
+            unknownCalls[referencingMethod] = unknownCalls.GetOrDefault(referencingMethod, 0) + 1;
+        }
+    }
+
     private static void Add<T>(Dictionary<T, HashSet<T>> dictionary, T key, T value) where T : notnull
     {
         if (!dictionary.TryGetValue(key, out var list))
@@ -326,5 +394,15 @@ public class CallAnalysisProcessingLayer : Cpp2IlProcessingLayer
             dictionary.Add(key, list);
         }
         list.Add(value);
+    }
+
+    private static long Count<T>(Dictionary<T, HashSet<T>> dictionary) where T : notnull
+    {
+        long count = 0;
+        foreach (var set in dictionary.Values)
+        {
+            count += set.Count;
+        }
+        return count;
     }
 }
