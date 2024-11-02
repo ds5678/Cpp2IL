@@ -19,6 +19,8 @@ public static class LibCpp2IlReflection
 
     private static readonly Dictionary<Il2CppFieldDefinition, Il2CppTypeDefinition> FieldDeclaringTypes = new();
 
+    private static readonly Dictionary<uint, Il2CppParameterDefinition> ParametersByToken = new();
+
     private static readonly Dictionary<Il2CppTypeEnum, Il2CppType> PrimitiveTypeCache = new();
     public static readonly Dictionary<Il2CppTypeEnum, Il2CppTypeDefinition> PrimitiveTypeDefinitions = new();
     private static readonly Dictionary<long, Il2CppType> Il2CppTypeCache = new();
@@ -35,6 +37,7 @@ public static class LibCpp2IlReflection
         FieldIndices.Clear();
         PropertyIndices.Clear();
         FieldDeclaringTypes.Clear();
+        ParametersByToken.Clear();
         PrimitiveTypeCache.Clear();
         PrimitiveTypeDefinitions.Clear();
         Il2CppTypeCache.Clear();
@@ -222,6 +225,27 @@ public static class LibCpp2IlReflection
         }
 
         return FieldDeclaringTypes[fieldDefinition];
+    }
+
+    public static Il2CppParameterDefinition? GetParameterFromToken(uint token)
+    {
+        if (LibCpp2IlMain.TheMetadata == null) return null;
+
+        if (ParametersByToken.Count == 0)
+        {
+            lock (ParametersByToken)
+            {
+                if (ParametersByToken.Count == 0)
+                {
+                    foreach (var parameter in LibCpp2IlMain.TheMetadata.parameterDefs)
+                    {
+                        ParametersByToken[parameter.token] = parameter;
+                    }
+                }
+            }
+        }
+
+        return ParametersByToken.GetOrDefault(token);
     }
 
     public static Il2CppType? GetTypeFromDefinition(Il2CppTypeDefinition definition)

@@ -42,6 +42,8 @@ public class Il2CppMethodDefinition : ReadableClass
 
     public Il2CppTypeReflectionData? ReturnType => LibCpp2IlMain.Binary == null ? null : LibCpp2ILUtils.GetTypeReflectionData(LibCpp2IlMain.Binary.GetType(returnTypeIdx));
 
+    public Il2CppParameterDefinition? ReturnParameter => !IsAtLeast(31) || returnParameterToken == 0x08000000 ? null : LibCpp2IlReflection.GetParameterFromToken(returnParameterToken);
+
     public Il2CppTypeDefinition? DeclaringType => LibCpp2IlMain.TheMetadata == null ? null : LibCpp2IlMain.TheMetadata.typeDefs[declaringTypeIdx];
 
     private ulong? _methodPointer = null;

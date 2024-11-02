@@ -75,7 +75,9 @@ public class MethodAnalysisContext : HasCustomAttributesAndName, IMethodInfoProv
 
     //TODO Support custom attributes on return types (v31 feature)
     public TypeAnalysisContext ReturnTypeContext => InjectedReturnType ?? DeclaringType!.DeclaringAssembly.ResolveIl2CppType(Definition!.RawReturnType!);
-    
+
+    public ParameterAnalysisContext ReturnParameter { get; }
+
     protected Memory<byte>? rawMethodBody;
 
 
@@ -89,6 +91,11 @@ public class MethodAnalysisContext : HasCustomAttributesAndName, IMethodInfoProv
     {
         DeclaringType = parent;
         Definition = definition;
+        var returnParameter = Definition?.ReturnParameter;
+        if (returnParameter is not null)
+        {
+            ReturnParameter = new(returnParameter, -1, this);
+        }
 
         if (Definition != null)
         {
