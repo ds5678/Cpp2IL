@@ -18,6 +18,8 @@ public class Il2CppTypeDefinition : ReadableClass
 
     public int DeclaringTypeIndex;
     public int ParentIndex;
+
+    [Version(Max = 31.1f)] //Removed in v35
     public int ElementTypeIndex; // we can probably remove this one. Only used for enums
 
     [Version(Max = 24.15f)] public int RgctxStartIndex;
@@ -370,7 +372,9 @@ public class Il2CppTypeDefinition : ReadableClass
 
         DeclaringTypeIndex = reader.ReadInt32();
         ParentIndex = reader.ReadInt32();
-        ElementTypeIndex = reader.ReadInt32();
+
+        if (IsLessThan(35f))
+            ElementTypeIndex = reader.ReadInt32();
 
         if (IsAtMost(24.15f))
         {

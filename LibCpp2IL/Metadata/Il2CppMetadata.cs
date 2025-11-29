@@ -124,7 +124,12 @@ public class Il2CppMetadata : ClassReadingBinaryReader
                 //v31 WITHOUT changes in codereg 
                 actualVersion = 31;
         }
-        else actualVersion = version;
+        else
+        {
+            // 6000.3.0a2 introduces v35
+            // 6000.3.0a5 introduces v38
+            actualVersion = version;
+        }
 
         LibLogger.InfoNewline($"\tUsing actual IL2CPP Metadata version {actualVersion}");
 
