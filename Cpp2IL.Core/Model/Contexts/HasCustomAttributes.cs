@@ -146,8 +146,8 @@ public abstract class HasCustomAttributes(uint token, ApplicationAnalysisContext
         var attributeDataRange = AppContext.Metadata.AttributeDataRanges[caIndex];
         var next = AppContext.Metadata.AttributeDataRanges[caIndex + 1];
 
-        var blobStart = AppContext.Metadata.metadataHeader.attributeDataOffset + attributeDataRange.startOffset;
-        var blobEnd = AppContext.Metadata.metadataHeader.attributeDataOffset + next.startOffset;
+        var blobStart = AppContext.Metadata.metadataHeader.attributeData!.Offset + attributeDataRange.startOffset;
+        var blobEnd = AppContext.Metadata.metadataHeader.attributeData.Offset + next.startOffset;
         return (blobStart, blobEnd);
     }
 

@@ -4,188 +4,129 @@ public class Il2CppGlobalMetadataHeader : ReadableClass
 {
     public uint magicNumber;
     public int version;
-    public int stringLiteralOffset; // string data for managed code
-    public int stringLiteralCount;
-    public int stringLiteralDataOffset;
-    public int stringLiteralDataCount;
-    public int stringOffset; // string data for metadata
-    public int stringCount;
-    public int eventsOffset; // Il2CppEventDefinition
-    public int eventsCount;
-    public int propertiesOffset; // Il2CppPropertyDefinition
-    public int propertiesCount;
-    public int methodsOffset; // Il2CppMethodDefinition
-    public int methodsCount;
-    public int parameterDefaultValuesOffset; // Il2CppParameterDefaultValue
-    public int parameterDefaultValuesCount;
-    public int fieldDefaultValuesOffset; // Il2CppFieldDefaultValue
-    public int fieldDefaultValuesCount;
-    public int fieldAndParameterDefaultValueDataOffset; // uint8_t
-    public int fieldAndParameterDefaultValueDataCount;
-    public int fieldMarshaledSizesOffset; // Il2CppFieldMarshaledSize
-    public int fieldMarshaledSizesCount;
-    public int parametersOffset; // Il2CppParameterDefinition
-    public int parametersCount;
-    public int fieldsOffset; // Il2CppFieldDefinition
-    public int fieldsCount;
-    public int genericParametersOffset; // Il2CppGenericParameter
-    public int genericParametersCount;
-    public int genericParameterConstraintsOffset; // TypeIndex
-    public int genericParameterConstraintsCount;
-    public int genericContainersOffset; // Il2CppGenericContainer
-    public int genericContainersCount;
-    public int nestedTypesOffset; // TypeDefinitionIndex
-    public int nestedTypesCount;
-    public int interfacesOffset; // TypeIndex
-    public int interfacesCount;
-    public int vtableMethodsOffset; // EncodedMethodIndex
-    public int vtableMethodsCount;
-    public int interfaceOffsetsOffset; // Il2CppInterfaceOffsetPair
-    public int interfaceOffsetsCount;
-    public int typeDefinitionsOffset; // Il2CppTypeDefinition
-    public int typeDefinitionsCount;
-    [Version(Max = 24.15f)] public int rgctxEntriesOffset; // Il2CppRGCTXDefinition
-    [Version(Max = 24.15f)] public int rgctxEntriesCount;
-    public int imagesOffset; // Il2CppImageDefinition
-    public int imagesCount;
-    public int assembliesOffset; // Il2CppAssemblyDefinition
-    public int assembliesCount;
-    [Version(Max = 24.5f)] public int metadataUsageListsOffset; // Il2CppMetadataUsageList, Removed in v27
-    [Version(Max = 24.5f)] public int metadataUsageListsCount; //Removed in v27
-    [Version(Max = 24.5f)] public int metadataUsagePairsOffset; // Il2CppMetadataUsagePair, Removed in v27
-    [Version(Max = 24.5f)] public int metadataUsagePairsCount; //Removed in v27
-    public int fieldRefsOffset; // Il2CppFieldRef
-    public int fieldRefsCount;
-    public int referencedAssembliesOffset; // int32_t
-    public int referencedAssembliesCount;
+
+#nullable disable
+    public Il2CppSectionMetadata stringLiterals; // string data for managed code
+    public Il2CppSectionMetadata stringLiteralData;
+    public Il2CppSectionMetadata strings; // string data for metadata
+    public Il2CppSectionMetadata events; // Il2CppEventDefinition
+    public Il2CppSectionMetadata properties; // Il2CppPropertyDefinition
+    public Il2CppSectionMetadata methods; // Il2CppMethodDefinition
+    public Il2CppSectionMetadata parameterDefaultValues; // Il2CppParameterDefaultValue
+    public Il2CppSectionMetadata fieldDefaultValues; // Il2CppFieldDefaultValue
+    public Il2CppSectionMetadata fieldAndParameterDefaultValueData; // uint8_t
+    public Il2CppSectionMetadata fieldMarshaledSizes; // Il2CppFieldMarshaledSize
+    public Il2CppSectionMetadata parameters; // Il2CppParameterDefinition
+    public Il2CppSectionMetadata fields; // Il2CppFieldDefinition
+    public Il2CppSectionMetadata genericParameters; // Il2CppGenericParameter
+    public Il2CppSectionMetadata genericParameterConstraints; // TypeIndex
+    public Il2CppSectionMetadata genericContainers; // Il2CppGenericContainer
+    public Il2CppSectionMetadata nestedTypes; // TypeDefinitionIndex
+    public Il2CppSectionMetadata interfaces; // TypeIndex
+    public Il2CppSectionMetadata vtableMethods; // EncodedMethodIndex
+    public Il2CppSectionMetadata interfaceOffsets; // Il2CppInterfacePair
+    public Il2CppSectionMetadata typeDefinitions; // Il2CppTypeDefinition
+#nullable enable
+
+    [Version(Max = 24.15f)] public Il2CppSectionMetadata? rgctxEntries; // Il2CppRGCTXDefinition
+
+#nullable disable
+    public Il2CppSectionMetadata images; // Il2CppImageDefinition
+    public Il2CppSectionMetadata assemblies; // Il2CppAssemblyDefinition
+#nullable enable
+
+    [Version(Max = 24.5f)] public Il2CppSectionMetadata? metadataUsageLists; // Il2CppMetadataUsageList, Removed in v27 //Removed in v27
+    [Version(Max = 24.5f)] public Il2CppSectionMetadata? metadataUsagePairs; // Il2CppMetadataUsagePair, Removed in v27 //Removed in v27
+
+#nullable disable
+    public Il2CppSectionMetadata fieldRefs; // Il2CppFieldRef
+    public Il2CppSectionMetadata referencedAssemblies; // int32_t
+#nullable enable
 
     //Pre-29 attribute data
-    [Version(Max = 27.9f)] public int attributesInfoOffset; // Il2CppCustomAttributeTypeRange
-    [Version(Max = 27.9f)] public int attributesInfoCount;
-    [Version(Max = 27.9f)] public int attributeTypesOffset; // TypeIndex
-    [Version(Max = 27.9f)] public int attributeTypesCount;
+    [Version(Max = 27.9f)] public Il2CppSectionMetadata? attributesInfo; // Il2CppCustomAttributeTypeRange
+    [Version(Max = 27.9f)] public Il2CppSectionMetadata? attributeTypes; // TypeIndex
 
     //Post-29 attribute data
-    [Version(Min = 27.9f)] public int attributeDataOffset; //uint8_t
-    [Version(Min = 27.9f)] public int attributeDataCount;
-    [Version(Min = 27.9f)] public int attributeDataRangeOffset; //Il2CppCustomAttributeDataRange
-    [Version(Min = 27.9f)] public int attributeDataRangeCount;
+    [Version(Min = 27.9f)] public Il2CppSectionMetadata? attributeData; //uint8_t
+    [Version(Min = 27.9f)] public Il2CppSectionMetadata? attributeDataRanges; //Il2CppCustomAttributeDataRange
 
-    public int unresolvedVirtualCallParameterTypesOffset; // TypeIndex
-    public int unresolvedVirtualCallParameterTypesCount;
-    public int unresolvedVirtualCallParameterRangesOffset; // Il2CppRange
-    public int unresolvedVirtualCallParameterRangesCount;
+#nullable disable
+    public Il2CppSectionMetadata unresolvedVirtualCallParameterTypes; // TypeIndex
+    public Il2CppSectionMetadata unresolvedVirtualCallParameterRanges; // Il2CppRange
+#nullable enable
 
-    [Version(Min = 23)] public int windowsRuntimeTypeNamesOffset; // Il2CppWindowsRuntimeTypeNamePair
-    [Version(Min = 23)] public int windowsRuntimeTypeNamesSize;
+    [Version(Min = 23)] public Il2CppSectionMetadata? windowsRuntimeTypeNames; // Il2CppWindowsRuntimeTypeNamePair
 
-    [Version(Min = 27)] public int windowsRuntimeStringsOffset; // const char*
-    [Version(Min = 27)] public int windowsRuntimeStringsSize;
+    [Version(Min = 27)] public Il2CppSectionMetadata? windowsRuntimeStrings; // const char*
 
-    [Version(Min = 24)] public int exportedTypeDefinitionsOffset; // TypeDefinitionIndex
-    [Version(Min = 24)] public int exportedTypeDefinitionsCount;
+    [Version(Min = 24)] public Il2CppSectionMetadata? exportedTypeDefinitions; // TypeDefinitionIndex
 
     public override void Read(ClassReadingBinaryReader reader)
     {
         magicNumber = reader.ReadUInt32();
         version = reader.ReadInt32();
-        stringLiteralOffset = reader.ReadInt32();
-        stringLiteralCount = reader.ReadInt32();
-        stringLiteralDataOffset = reader.ReadInt32();
-        stringLiteralDataCount = reader.ReadInt32();
-        stringOffset = reader.ReadInt32();
-        stringCount = reader.ReadInt32();
-        eventsOffset = reader.ReadInt32();
-        eventsCount = reader.ReadInt32();
-        propertiesOffset = reader.ReadInt32();
-        propertiesCount = reader.ReadInt32();
-        methodsOffset = reader.ReadInt32();
-        methodsCount = reader.ReadInt32();
-        parameterDefaultValuesOffset = reader.ReadInt32();
-        parameterDefaultValuesCount = reader.ReadInt32();
-        fieldDefaultValuesOffset = reader.ReadInt32();
-        fieldDefaultValuesCount = reader.ReadInt32();
-        fieldAndParameterDefaultValueDataOffset = reader.ReadInt32();
-        fieldAndParameterDefaultValueDataCount = reader.ReadInt32();
-        fieldMarshaledSizesOffset = reader.ReadInt32();
-        fieldMarshaledSizesCount = reader.ReadInt32();
-        parametersOffset = reader.ReadInt32();
-        parametersCount = reader.ReadInt32();
-        fieldsOffset = reader.ReadInt32();
-        fieldsCount = reader.ReadInt32();
-        genericParametersOffset = reader.ReadInt32();
-        genericParametersCount = reader.ReadInt32();
-        genericParameterConstraintsOffset = reader.ReadInt32();
-        genericParameterConstraintsCount = reader.ReadInt32();
-        genericContainersOffset = reader.ReadInt32();
-        genericContainersCount = reader.ReadInt32();
-        nestedTypesOffset = reader.ReadInt32();
-        nestedTypesCount = reader.ReadInt32();
-        interfacesOffset = reader.ReadInt32();
-        interfacesCount = reader.ReadInt32();
-        vtableMethodsOffset = reader.ReadInt32();
-        vtableMethodsCount = reader.ReadInt32();
-        interfaceOffsetsOffset = reader.ReadInt32();
-        interfaceOffsetsCount = reader.ReadInt32();
-        typeDefinitionsOffset = reader.ReadInt32();
-        typeDefinitionsCount = reader.ReadInt32();
+        stringLiterals = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        stringLiteralData = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        strings = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        events = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        properties = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        methods = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        parameterDefaultValues = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        fieldDefaultValues = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        fieldAndParameterDefaultValueData = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        fieldMarshaledSizes = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        parameters = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        fields = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        genericParameters = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        genericParameterConstraints = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        genericContainers = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        nestedTypes = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        interfaces = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        vtableMethods = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        interfaceOffsets = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        typeDefinitions = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
 
         if (IsAtMost(24.15f))
         {
-            rgctxEntriesOffset = reader.ReadInt32();
-            rgctxEntriesCount = reader.ReadInt32();
+            rgctxEntries = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
         }
 
-        imagesOffset = reader.ReadInt32();
-        imagesCount = reader.ReadInt32();
-        assembliesOffset = reader.ReadInt32();
-        assembliesCount = reader.ReadInt32();
+        images = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        assemblies = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
 
         if (IsLessThan(27f))
         {
-            metadataUsageListsOffset = reader.ReadInt32();
-            metadataUsageListsCount = reader.ReadInt32();
-            metadataUsagePairsOffset = reader.ReadInt32();
-            metadataUsagePairsCount = reader.ReadInt32();
+            metadataUsageLists = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            metadataUsagePairs = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
         }
 
-        fieldRefsOffset = reader.ReadInt32();
-        fieldRefsCount = reader.ReadInt32();
-        referencedAssembliesOffset = reader.ReadInt32();
-        referencedAssembliesCount = reader.ReadInt32();
+        fieldRefs = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        referencedAssemblies = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
 
         if (IsLessThan(29f))
         {
-            attributesInfoOffset = reader.ReadInt32();
-            attributesInfoCount = reader.ReadInt32();
-            attributeTypesOffset = reader.ReadInt32();
-            attributeTypesCount = reader.ReadInt32();
+            attributesInfo = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            attributeTypes = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
         }
         else
         {
-            attributeDataOffset = reader.ReadInt32();
-            attributeDataCount = reader.ReadInt32();
-            attributeDataRangeOffset = reader.ReadInt32();
-            attributeDataRangeCount = reader.ReadInt32();
+            attributeData = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            attributeDataRanges = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
         }
 
-        unresolvedVirtualCallParameterTypesOffset = reader.ReadInt32();
-        unresolvedVirtualCallParameterTypesCount = reader.ReadInt32();
-        unresolvedVirtualCallParameterRangesOffset = reader.ReadInt32();
-        unresolvedVirtualCallParameterRangesCount = reader.ReadInt32();
-        windowsRuntimeTypeNamesOffset = reader.ReadInt32();
-        windowsRuntimeTypeNamesSize = reader.ReadInt32();
+        unresolvedVirtualCallParameterTypes = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        unresolvedVirtualCallParameterRanges = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        windowsRuntimeTypeNames = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
 
         if (IsAtLeast(27f))
         {
-            windowsRuntimeStringsOffset = reader.ReadInt32();
-            windowsRuntimeStringsSize = reader.ReadInt32();
+            windowsRuntimeStrings = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
         }
 
         if (IsAtLeast(24f))
         {
-            exportedTypeDefinitionsOffset = reader.ReadInt32();
-            exportedTypeDefinitionsCount = reader.ReadInt32();
+            exportedTypeDefinitions = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
         }
     }
 }
