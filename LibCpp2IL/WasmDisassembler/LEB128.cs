@@ -1,6 +1,9 @@
-﻿// This software is released under the BSD License.
+// This software is released under the BSD License.
 // See LICENSE file for details.
 // From https://github.com/rzubek/mini-leb128
+
+using System;
+using System.IO;
 
 namespace WasmDisassembler;
 

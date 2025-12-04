@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Cpp2IL.Core.Api;
 using Cpp2IL.Core.Attributes;
 using Cpp2IL.Plugin.StrippedCodeRegSupport;
