@@ -82,13 +82,21 @@ public class MethodAnalysisContext : HasGenericParameters, IMethodInfoProvider
 
     public virtual MethodAttributes? OverrideAttributes { get; set; }
 
-    public MethodAttributes Attributes => OverrideAttributes ?? DefaultAttributes;
+    public MethodAttributes Attributes
+    {
+        get => OverrideAttributes ?? DefaultAttributes;
+        set => OverrideAttributes = value;
+    }
 
     public virtual MethodImplAttributes DefaultImplAttributes => Definition?.MethodImplAttributes ?? throw new($"Subclasses of MethodAnalysisContext should override {nameof(DefaultImplAttributes)}");
 
     public virtual MethodImplAttributes? OverrideImplAttributes { get; set; }
 
-    public MethodImplAttributes ImplAttributes => OverrideImplAttributes ?? DefaultImplAttributes;
+    public MethodImplAttributes ImplAttributes
+    {
+        get => OverrideImplAttributes ?? DefaultImplAttributes;
+        set => OverrideImplAttributes = value;
+    }
 
     public MethodAttributes Visibility
     {
@@ -98,7 +106,7 @@ public class MethodAnalysisContext : HasGenericParameters, IMethodInfoProvider
         }
         set
         {
-            OverrideAttributes = (Attributes & ~MethodAttributes.MemberAccessMask) | (value & MethodAttributes.MemberAccessMask);
+            Attributes = (Attributes & ~MethodAttributes.MemberAccessMask) | (value & MethodAttributes.MemberAccessMask);
         }
     }
 
@@ -120,7 +128,11 @@ public class MethodAnalysisContext : HasGenericParameters, IMethodInfoProvider
     public TypeAnalysisContext? OverrideReturnType { get; set; }
 
     //TODO Support custom attributes on return types (v31 feature)
-    public TypeAnalysisContext ReturnType => OverrideReturnType ?? DefaultReturnType;
+    public TypeAnalysisContext ReturnType
+    {
+        get => OverrideReturnType ?? DefaultReturnType;
+        set => OverrideReturnType = value;
+    }
     
     protected Memory<byte>? rawMethodBody;
 

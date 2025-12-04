@@ -24,13 +24,21 @@ public class EventAnalysisContext : HasCustomAttributesAndName, IEventInfoProvid
 
     public EventAttributes? OverrideAttributes { get; set; }
 
-    public EventAttributes Attributes => OverrideAttributes ?? DefaultAttributes;
+    public EventAttributes Attributes
+    {
+        get => OverrideAttributes ?? DefaultAttributes;
+        set => OverrideAttributes = value;
+    }
 
     public virtual TypeAnalysisContext DefaultEventType => DeclaringType.DeclaringAssembly.ResolveIl2CppType(Definition?.RawType) ?? throw new($"Subclasses must override {nameof(DefaultEventType)}.");
 
     public TypeAnalysisContext? OverrideEventType { get; set; }
 
-    public TypeAnalysisContext EventType => OverrideEventType ?? DefaultEventType;
+    public TypeAnalysisContext EventType
+    {
+        get => OverrideEventType ?? DefaultEventType;
+        set => OverrideEventType = value;
+    }
 
     public virtual bool IsStatic => Definition?.IsStatic ?? throw new($"Subclasses must override {nameof(IsStatic)}.");
 

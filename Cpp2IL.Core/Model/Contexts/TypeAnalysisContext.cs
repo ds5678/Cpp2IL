@@ -63,19 +63,31 @@ public class TypeAnalysisContext : HasGenericParameters, ITypeInfoProvider, ICSh
 
     public string? OverrideNamespace { get; set; }
 
-    public string Namespace => OverrideNamespace ?? DefaultNamespace;
+    public string Namespace
+    {
+        get => OverrideNamespace ?? DefaultNamespace;
+        set => OverrideNamespace = value;
+    }
 
     public virtual TypeAttributes DefaultAttributes => Definition?.Attributes ?? TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
     public virtual TypeAttributes? OverrideAttributes { get; set; }
 
-    public TypeAttributes Attributes => OverrideAttributes ?? DefaultAttributes;
+    public TypeAttributes Attributes
+    {
+        get => OverrideAttributes ?? DefaultAttributes;
+        set => OverrideAttributes = value;
+    }
 
     public virtual TypeAnalysisContext? DefaultBaseType => Definition == null || DefaultAttributes.HasFlag(TypeAttributes.Interface) ? null : DeclaringAssembly.ResolveIl2CppType(Definition.RawBaseType);
 
     public TypeAnalysisContext? OverrideBaseType { get; set; }
 
-    public TypeAnalysisContext? BaseType => OverrideBaseType ?? DefaultBaseType;
+    public TypeAnalysisContext? BaseType
+    {
+        get => OverrideBaseType ?? DefaultBaseType;
+        set => OverrideBaseType = value;
+    }
 
     public TypeAnalysisContext? DeclaringType { get; protected internal set; }
 
@@ -156,7 +168,7 @@ public class TypeAnalysisContext : HasGenericParameters, ITypeInfoProvider, ICSh
         }
         set
         {
-            OverrideAttributes = (Attributes & ~TypeAttributes.VisibilityMask) | (value & TypeAttributes.VisibilityMask);
+            Attributes = (Attributes & ~TypeAttributes.VisibilityMask) | (value & TypeAttributes.VisibilityMask);
         }
     }
 
