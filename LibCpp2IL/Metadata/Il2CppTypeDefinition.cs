@@ -58,6 +58,8 @@ public class Il2CppTypeDefinition : ReadableClass
     // 11 - PackingSize is default
     // 12 - ClassSize is default
     // 13-16 - One of nine possible PackingSize values (0, 1, 2, 4, 8, 16, 32, 64, or 128) - the specified packing size (even for explicit layouts)
+    // 17 - IsByRefLike (e.g. ref struct)
+    // 18 - HasInlineArray
     public uint Bitfield;
     public uint Token;
 
@@ -72,6 +74,7 @@ public class Il2CppTypeDefinition : ReadableClass
     public bool ClassSizeIsDefault => (Bitfield >> 11 & 0x1) == 1;
     public uint SpecifiedPackingSize => ((Il2CppPackingSizeEnum)(Bitfield >> 12 & 0xF)).NumericalValue();
     public bool IsByRefLike => (Bitfield >> 16 & 0x1) == 1;
+    public bool HasInlineArray => (Bitfield >> 17 & 0x1) == 1;
 
     public TypeAttributes Attributes => (TypeAttributes)Flags;
 
