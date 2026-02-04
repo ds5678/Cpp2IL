@@ -128,6 +128,9 @@ public class Il2CppMetadata : ClassReadingBinaryReader
         {
             // 6000.3.0a2 introduces v35
             // 6000.3.0a5 introduces v38
+            // 6000.3.0b1 introduces v39
+            // 6000.5.0a3 introduces v104
+            // 6000.5.0a5 introduces v105
             actualVersion = version;
         }
 
