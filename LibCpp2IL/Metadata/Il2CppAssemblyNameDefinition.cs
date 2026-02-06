@@ -151,11 +151,11 @@ public class Il2CppAssemblyNameDefinition : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        nameIndex = reader.ReadInt32();
-        cultureIndex = reader.ReadInt32();
+        nameIndex = reader.ReadStringIndex();
+        cultureIndex = reader.ReadStringIndex();
         if (IsAtMost(24.3f) && IsNot(24.15f))
-            hashValueIndex = reader.ReadInt32();
-        publicKeyIndex = reader.ReadInt32();
+            hashValueIndex = reader.ReadStringIndex();
+        publicKeyIndex = reader.ReadStringIndex();
         hash_alg = reader.ReadUInt32();
         hash_len = reader.ReadInt32();
         flags = reader.ReadUInt32();

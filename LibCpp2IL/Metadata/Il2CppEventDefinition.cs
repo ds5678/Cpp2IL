@@ -60,19 +60,19 @@ public class Il2CppEventDefinition : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        nameIndex = reader.ReadInt32();
+        nameIndex = reader.ReadStringIndex();
 
         //Cache name now
         var pos = reader.Position;
         Name = ((Il2CppMetadata)reader).ReadStringFromIndexNoReadLock(nameIndex);
         reader.Position = pos;
 
-        typeIndex = reader.ReadInt32();
-        add = reader.ReadInt32();
-        remove = reader.ReadInt32();
-        raise = reader.ReadInt32();
+        typeIndex = reader.ReadTypeIndex();
+        add = reader.ReadMethodIndex();
+        remove = reader.ReadMethodIndex();
+        raise = reader.ReadMethodIndex();
         if (IsAtMost(24f))
-            customAttributeIndex = reader.ReadInt32();
+            customAttributeIndex = reader.ReadCustomAttributeIndex();
         token = reader.ReadUInt32();
     }
 }

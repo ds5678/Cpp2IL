@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LibCpp2IL.Logging;
+using LibCpp2IL.Metadata;
 
 namespace LibCpp2IL.MachO;
 
@@ -11,6 +12,7 @@ public class MachOUniversalFile : ClassReadingBinaryReader
     public MachOFile BestMachOFile { get; }
 
     public override float MetadataVersion => BestMachOFile?.MetadataVersion ?? 0;
+    public sealed override Il2CppGlobalMetadataHeader MetadataHeader => BestMachOFile.MetadataHeader;
 
     private static readonly MachOCpuType[] OrderedSupportedCpuTypes =
     [

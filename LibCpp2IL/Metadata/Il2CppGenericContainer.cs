@@ -58,6 +58,6 @@ public class Il2CppGenericContainer : ReadableClass
         ownerIndex = reader.ReadInt32();
         genericParameterCount = reader.ReadInt32();
         isGenericMethod = reader.ReadInt32() != 0;
-        genericParameterStart = reader.ReadInt32();
+        genericParameterStart = reader.ReadGenericParameterIndex();
     }
 }

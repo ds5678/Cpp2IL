@@ -48,19 +48,19 @@ public class Il2CppPropertyDefinition : ReadableClass, IIl2CppTokenProvider
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        nameIndex = reader.ReadInt32();
+        nameIndex = reader.ReadStringIndex();
 
         //Cache name now
         var pos = reader.Position;
         Name = ((Il2CppMetadata)reader).ReadStringFromIndexNoReadLock(nameIndex);
         reader.Position = pos;
 
-        get = reader.ReadInt32();
-        set = reader.ReadInt32();
+        get = reader.ReadMethodIndex();
+        set = reader.ReadMethodIndex();
         attrs = reader.ReadUInt32();
 
         if (IsAtMost(24f))
-            customAttributeIndex = reader.ReadInt32();
+            customAttributeIndex = reader.ReadCustomAttributeIndex();
 
         token = reader.ReadUInt32();
     }

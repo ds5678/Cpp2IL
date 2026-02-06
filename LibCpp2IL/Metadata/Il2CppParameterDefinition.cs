@@ -17,7 +17,7 @@ public class Il2CppParameterDefinition : ReadableClass, IIl2CppTokenProvider
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        nameIndex = reader.ReadInt32();
+        nameIndex = reader.ReadStringIndex();
 
         //Cache name now
         var pos = reader.Position;
@@ -27,8 +27,8 @@ public class Il2CppParameterDefinition : ReadableClass, IIl2CppTokenProvider
         token = reader.ReadUInt32();
 
         if (IsAtMost(24f))
-            customAttributeIndex = reader.ReadInt32();
+            customAttributeIndex = reader.ReadCustomAttributeIndex();
 
-        typeIndex = reader.ReadInt32();
+        typeIndex = reader.ReadTypeIndex();
     }
 }

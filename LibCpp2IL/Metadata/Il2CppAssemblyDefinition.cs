@@ -25,11 +25,11 @@ public class Il2CppAssemblyDefinition : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        ImageIndex = reader.ReadInt32();
+        ImageIndex = reader.ReadImageIndex();
         if (IsAtLeast(24.1f))
             Token = reader.ReadUInt32();
         if (IsAtMost(24.0f))
-            CustomAttributeIndex = reader.ReadInt32();
+            CustomAttributeIndex = reader.ReadCustomAttributeIndex();
         if (IsAtLeast(38f))
             ModuleToken = reader.ReadUInt32();
         ReferencedAssemblyStart = reader.ReadInt32();

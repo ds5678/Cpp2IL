@@ -36,9 +36,9 @@ public class Il2CppGenericParameter : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        ownerIndex = reader.ReadInt32();
-        nameIndex = reader.ReadInt32();
-        constraintsStart = reader.ReadInt16();
+        ownerIndex = reader.ReadGenericContainerIndex();
+        nameIndex = reader.ReadStringIndex();
+        constraintsStart = reader.ReadGenericParameterConstraintIndex();
         constraintsCount = reader.ReadInt16();
         genericParameterIndexInOwner = reader.ReadUInt16();
         flags = reader.ReadUInt16();

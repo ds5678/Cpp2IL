@@ -362,40 +362,40 @@ public class Il2CppTypeDefinition : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        NameIndex = reader.ReadInt32();
-        NamespaceIndex = reader.ReadInt32();
+        NameIndex = reader.ReadStringIndex();
+        NamespaceIndex = reader.ReadStringIndex();
 
         if (IsAtMost(24f))
-            CustomAttributeIndex = reader.ReadInt32();
+            CustomAttributeIndex = reader.ReadCustomAttributeIndex();
 
-        ByvalTypeIndex = reader.ReadInt32();
+        ByvalTypeIndex = reader.ReadTypeIndex();
 
         if (IsLessThan(27f))
-            ByrefTypeIndex = reader.ReadInt32();
+            ByrefTypeIndex = reader.ReadTypeIndex();
 
-        DeclaringTypeIndex = reader.ReadInt32();
-        ParentIndex = reader.ReadInt32();
+        DeclaringTypeIndex = reader.ReadTypeIndex();
+        ParentIndex = reader.ReadTypeIndex();
 
         if (IsLessThan(35f))
-            ElementTypeIndex = reader.ReadInt32();
+            ElementTypeIndex = reader.ReadTypeIndex();
 
         if (IsAtMost(24.15f))
         {
-            RgctxStartIndex = reader.ReadInt32();
+            RgctxStartIndex = reader.ReadRGCTXIndex();
             RgctxCount = reader.ReadInt32();
         }
 
-        GenericContainerIndex = reader.ReadInt32();
+        GenericContainerIndex = reader.ReadGenericContainerIndex();
         Flags = reader.ReadUInt32();
 
-        FirstFieldIdx = reader.ReadInt32();
-        FirstMethodIdx = reader.ReadInt32();
-        FirstEventId = reader.ReadInt32();
-        FirstPropertyId = reader.ReadInt32();
-        NestedTypesStart = reader.ReadInt32();
-        InterfacesStart = reader.ReadInt32();
-        VtableStart = reader.ReadInt32();
-        InterfaceOffsetsStart = reader.ReadInt32();
+        FirstFieldIdx = reader.ReadFieldIndex();
+        FirstMethodIdx = reader.ReadMethodIndex();
+        FirstEventId = reader.ReadEventIndex();
+        FirstPropertyId = reader.ReadPropertyIndex();
+        NestedTypesStart = reader.ReadNestedTypeIndex();
+        InterfacesStart = reader.ReadInterfacesIndex();
+        VtableStart = reader.ReadVTableIndex();
+        InterfaceOffsetsStart = reader.ReadInterfacesIndex();
 
         MethodCount = reader.ReadUInt16();
         PropertyCount = reader.ReadUInt16();

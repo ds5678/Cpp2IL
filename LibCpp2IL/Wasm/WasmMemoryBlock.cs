@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using LibCpp2IL.Metadata;
 
 namespace LibCpp2IL.Wasm;
 
@@ -10,6 +11,7 @@ public class WasmMemoryBlock : ClassReadingBinaryReader
 
     //This isn't valid until Init() is called on the parent WasmFile, but that's fine, nothing should be referencing it until then.
     public override float MetadataVersion => _file.MetadataVersion;
+    public sealed override Il2CppGlobalMetadataHeader MetadataHeader => _file.MetadataHeader;
 
     private static MemoryStream BuildStream(WasmFile file)
     {

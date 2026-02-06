@@ -55,16 +55,24 @@ public class Il2CppFieldDefinition : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        nameIndex = reader.ReadInt32();
+        nameIndex = reader.ReadStringIndex();
 
         //Cache name now
         var pos = reader.Position;
         Name = ((Il2CppMetadata)reader).ReadStringFromIndexNoReadLock(nameIndex);
         reader.Position = pos;
 
-        typeIndex = reader.ReadInt32();
+        typeIndex = reader.ReadTypeIndex();
         if (IsAtMost(24f))
-            customAttributeIndex = reader.ReadInt32();
+            customAttributeIndex = reader.ReadCustomAttributeIndex();
         token = reader.ReadUInt32();
+    }
+
+    internal static int MaxSize(Il2CppMetadataVersion version)
+    {
+        if (version.IsAtMost(24f))
+            return sizeof(int) + sizeof(int) + sizeof(int) + sizeof(uint);
+        else
+            return sizeof(int) + sizeof(int) + sizeof(uint);
     }
 }

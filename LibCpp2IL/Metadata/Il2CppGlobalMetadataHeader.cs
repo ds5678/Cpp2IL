@@ -1,7 +1,13 @@
+using System;
+using System.Buffers.Binary;
+using System.IO;
+
 namespace LibCpp2IL.Metadata;
 
-public class Il2CppGlobalMetadataHeader : ReadableClass
+public class Il2CppGlobalMetadataHeader
 {
+    internal Il2CppMetadataVersion MetadataVersion { get; set; }
+
     public uint magicNumber;
     public int version;
 
@@ -29,6 +35,8 @@ public class Il2CppGlobalMetadataHeader : ReadableClass
 #nullable enable
 
     [Version(Max = 24.15f)] public Il2CppSectionMetadata? rgctxEntries; // Il2CppRGCTXDefinition
+
+    [Version(Min = 104)] public Il2CppSectionMetadata? typeInlineArrays; //Il2CppInlineArrayLength
 
 #nullable disable
     public Il2CppSectionMetadata images; // Il2CppImageDefinition
@@ -62,71 +70,95 @@ public class Il2CppGlobalMetadataHeader : ReadableClass
 
     [Version(Min = 24)] public Il2CppSectionMetadata? exportedTypeDefinitions; // TypeDefinitionIndex
 
-    public override void Read(ClassReadingBinaryReader reader)
+    public void Read(EndianAwareBinaryReader reader)
     {
         magicNumber = reader.ReadUInt32();
         version = reader.ReadInt32();
-        stringLiterals = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        stringLiteralData = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        strings = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        events = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        properties = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        methods = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        parameterDefaultValues = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        fieldDefaultValues = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        fieldAndParameterDefaultValueData = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        fieldMarshaledSizes = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        parameters = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        fields = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        genericParameters = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        genericParameterConstraints = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        genericContainers = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        nestedTypes = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        interfaces = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        vtableMethods = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        interfaceOffsets = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        typeDefinitions = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        stringLiterals = ReadSectionMetadata(reader);
+        stringLiteralData = ReadSectionMetadata(reader);
+        strings = ReadSectionMetadata(reader);
+        events = ReadSectionMetadata(reader);
+        properties = ReadSectionMetadata(reader);
+        methods = ReadSectionMetadata(reader);
+        parameterDefaultValues = ReadSectionMetadata(reader);
+        fieldDefaultValues = ReadSectionMetadata(reader);
+        fieldAndParameterDefaultValueData = ReadSectionMetadata(reader);
+        fieldMarshaledSizes = ReadSectionMetadata(reader);
+        parameters = ReadSectionMetadata(reader);
+        fields = ReadSectionMetadata(reader);
+        genericParameters = ReadSectionMetadata(reader);
+        genericParameterConstraints = ReadSectionMetadata(reader);
+        genericContainers = ReadSectionMetadata(reader);
+        nestedTypes = ReadSectionMetadata(reader);
+        interfaces = ReadSectionMetadata(reader);
+        vtableMethods = ReadSectionMetadata(reader);
+        interfaceOffsets = ReadSectionMetadata(reader);
+        typeDefinitions = ReadSectionMetadata(reader);
 
-        if (IsAtMost(24.15f))
+        if (MetadataVersion.IsAtMost(24.15f))
         {
-            rgctxEntries = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            rgctxEntries = ReadSectionMetadata(reader);
         }
 
-        images = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        assemblies = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-
-        if (IsLessThan(27f))
+        if (MetadataVersion.IsAtLeast(104))
         {
-            metadataUsageLists = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-            metadataUsagePairs = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            typeInlineArrays = ReadSectionMetadata(reader);
         }
 
-        fieldRefs = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        referencedAssemblies = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        images = ReadSectionMetadata(reader);
+        assemblies = ReadSectionMetadata(reader);
 
-        if (IsLessThan(29f))
+        if (MetadataVersion.IsLessThan(27f))
         {
-            attributesInfo = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-            attributeTypes = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            metadataUsageLists = ReadSectionMetadata(reader);
+            metadataUsagePairs = ReadSectionMetadata(reader);
+        }
+
+        fieldRefs = ReadSectionMetadata(reader);
+        referencedAssemblies = ReadSectionMetadata(reader);
+
+        if (MetadataVersion.IsLessThan(29f))
+        {
+            attributesInfo = ReadSectionMetadata(reader);
+            attributeTypes = ReadSectionMetadata(reader);
         }
         else
         {
-            attributeData = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-            attributeDataRanges = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            attributeData = ReadSectionMetadata(reader);
+            attributeDataRanges = ReadSectionMetadata(reader);
         }
 
-        unresolvedVirtualCallParameterTypes = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        unresolvedVirtualCallParameterRanges = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
-        windowsRuntimeTypeNames = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+        unresolvedVirtualCallParameterTypes = ReadSectionMetadata(reader);
+        unresolvedVirtualCallParameterRanges = ReadSectionMetadata(reader);
+        windowsRuntimeTypeNames = ReadSectionMetadata(reader);
 
-        if (IsAtLeast(27f))
+        if (MetadataVersion.IsAtLeast(27f))
         {
-            windowsRuntimeStrings = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            windowsRuntimeStrings = ReadSectionMetadata(reader);
         }
 
-        if (IsAtLeast(24f))
+        if (MetadataVersion.IsAtLeast(24f))
         {
-            exportedTypeDefinitions = reader.ReadReadableHereNoLock<Il2CppSectionMetadata>();
+            exportedTypeDefinitions = ReadSectionMetadata(reader);
         }
     }
+
+    private Il2CppSectionMetadata ReadSectionMetadata(EndianAwareBinaryReader reader)
+    {
+        var section = new Il2CppSectionMetadata() { MetadataVersion = MetadataVersion };
+        section.Read(reader);
+        return section;
+    }
+
+    public static Il2CppGlobalMetadataHeader ReadFrom(byte[] bytes, Il2CppMetadataVersion metadataVersion, out int bytesRead)
+    {
+        using var memoryStream = new MemoryStream(bytes);
+        using var reader = new EndianAwareBinaryReader(memoryStream);
+        var header = new Il2CppGlobalMetadataHeader { MetadataVersion = metadataVersion };
+        header.Read(reader);
+        bytesRead = (int)memoryStream.Position;
+        return header;
+    }
+
+    public static bool HasMetadataHeader(ReadOnlySpan<byte> bytes) => bytes.Length >= 8 && BinaryPrimitives.ReadUInt32LittleEndian(bytes) == 0xFAB11BAF;
 }

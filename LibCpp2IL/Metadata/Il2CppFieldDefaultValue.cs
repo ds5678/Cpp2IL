@@ -10,8 +10,8 @@ public class Il2CppFieldDefaultValue : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        fieldIndex = reader.ReadInt32();
-        typeIndex = reader.ReadInt32();
-        dataIndex = reader.ReadInt32();
+        fieldIndex = reader.ReadFieldIndex();
+        typeIndex = reader.ReadTypeIndex();
+        dataIndex = reader.ReadDefaultValueDataIndex();
     }
 }

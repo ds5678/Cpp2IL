@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using LibCpp2IL.BinaryStructures;
@@ -150,32 +149,32 @@ public class Il2CppMethodDefinition : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        nameIndex = reader.ReadInt32();
+        nameIndex = reader.ReadStringIndex();
 
         //Cache name now
         var pos = reader.Position;
         Name = ((Il2CppMetadata)reader).ReadStringFromIndexNoReadLock(nameIndex);
         reader.Position = pos;
 
-        declaringTypeIdx = reader.ReadInt32();
-        returnTypeIdx = reader.ReadInt32();
+        declaringTypeIdx = reader.ReadTypeDefinitionIndex();
+        returnTypeIdx = reader.ReadTypeIndex();
 
         if (IsAtLeast(31))
             returnParameterToken = reader.ReadUInt32();
 
-        parameterStart = reader.ReadInt32();
+        parameterStart = reader.ReadParameterIndex();
 
         if (IsAtMost(24))
-            customAttributeIndex = reader.ReadInt32();
+            customAttributeIndex = reader.ReadCustomAttributeIndex();
 
-        genericContainerIndex = reader.ReadInt32();
+        genericContainerIndex = reader.ReadGenericContainerIndex();
 
         if (IsAtMost(24.15f))
         {
-            methodIndex = reader.ReadInt32();
-            invokerIndex = reader.ReadInt32();
-            delegateWrapperIndex = reader.ReadInt32();
-            rgctxStartIndex = reader.ReadInt32();
+            methodIndex = reader.ReadMethodIndex();
+            invokerIndex = reader.ReadMethodIndex();
+            delegateWrapperIndex = reader.ReadMethodIndex();
+            rgctxStartIndex = reader.ReadRGCTXIndex();
             rgctxCount = reader.ReadInt32();
         }
 

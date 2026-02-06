@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
+using LibCpp2IL.Metadata;
 
 namespace LibCpp2IL;
 
@@ -26,9 +26,38 @@ public abstract class ClassReadingBinaryReader : EndianAwareBinaryReader
     protected bool _hasFinishedInitialRead;
     private bool _inReadableRead;
     public ConcurrentDictionary<Type, int> BytesReadPerClass = new();
-    
-    public abstract float MetadataVersion { get; }
 
+    public abstract float MetadataVersion { get; }
+    public abstract Il2CppGlobalMetadataHeader MetadataHeader { get; }
+
+    private int EventIndexSize => IsLessThan(104) ? sizeof(int) : GetIndexSize(MetadataHeader.events.Count);
+    private int GenericContainerIndexSize => IsLessThan(38) ? sizeof(int) : GetIndexSize(MetadataHeader.genericContainers.Count);
+    private int InterfacesIndexSize => IsLessThan(104) ? sizeof(int) : GetIndexSize(MetadataHeader.interfaces.Count);// interfaceOffsets?
+    private int MethodIndexSize => IsLessThan(105) ? sizeof(int) : GetIndexSize(MetadataHeader.methods.Count);
+    private int NestedTypeIndexSize => IsLessThan(104) ? sizeof(int) : GetIndexSize(MetadataHeader.nestedTypes.Count);
+    private int ParameterIndexSize => IsLessThan(39) ? sizeof(int) : GetIndexSize(MetadataHeader.parameters.Count);
+    private int PropertyIndexSize => IsLessThan(104) ? sizeof(int) : GetIndexSize(MetadataHeader.properties.Count);
+    private int TypeDefinitionIndexSize => IsLessThan(38) ? sizeof(int) : GetIndexSize(MetadataHeader.typeDefinitions.Count);
+    private int TypeIndexSize
+    {
+        get
+        {
+            if (IsLessThan(38))
+            {
+                return sizeof(int);
+            }
+
+            // We need to derive the size for TypeIndex.
+            // This is normally done through s_Il2CppMetadataRegistration->typesCount, but we don't want to use the binary for this.
+            // We can calculate the size from a section that uses TypeIndex.
+            // We use FieldDefinition, due to its simple structure.
+            // Note: if StringIndex becomes no longer sizeof(int), this will need to be changed.
+
+            var maxFieldDefinitionSize = Il2CppFieldDefinition.MaxSize(MetadataVersion);
+            var actualFieldDefinitionSize = MetadataHeader.fields.Size / MetadataHeader.fields.Count;
+            return maxFieldDefinitionSize - actualFieldDefinitionSize + sizeof(int);
+        }
+    }
 
     public ClassReadingBinaryReader(MemoryStream input) : base(input)
     {
@@ -47,6 +76,12 @@ public abstract class ClassReadingBinaryReader : EndianAwareBinaryReader
     }
 
     public long Length => BaseStream.Length;
+
+    public bool IsAtLeast(float vers) => MetadataVersion >= vers;
+    public bool IsLessThan(float vers) => MetadataVersion < vers;
+    public bool IsAtMost(float vers) => MetadataVersion <= vers;
+    public bool IsNot(float vers) => Math.Abs(MetadataVersion - vers) > 0.001f;
+    public bool Is(float vers) => Math.Abs(MetadataVersion - vers) < 0.001f;
 
     internal virtual object? ReadPrimitive(Type type, bool overrideArchCheck = false)
     {
@@ -242,6 +277,62 @@ public abstract class ClassReadingBinaryReader : EndianAwareBinaryReader
         {
             ReleaseLock();
         }
+    }
+
+    public int ReadAssemblyIndex() => ReadInt32();
+    public int ReadCustomAttributeIndex() => ReadInt32();
+    public int ReadDefaultValueDataIndex() => ReadInt32();
+    public int ReadEventIndex() => ReadIndex(EventIndexSize);
+    public int ReadFieldIndex() => ReadInt32();
+    public int ReadGenericContainerIndex() => ReadIndex(GenericContainerIndexSize);
+    public short ReadGenericParameterConstraintIndex() => ReadInt16();
+    public int ReadGenericParameterIndex() => ReadInt32();
+    public int ReadImageIndex() => ReadInt32();
+    public int ReadInterfacesIndex() => ReadIndex(InterfacesIndexSize);
+    public int ReadMethodIndex() => ReadIndex(MethodIndexSize);
+    public int ReadNestedTypeIndex() => ReadIndex(NestedTypeIndexSize);
+    public int ReadParameterIndex() => ReadIndex(ParameterIndexSize);
+    public int ReadPropertyIndex() => ReadIndex(PropertyIndexSize);
+    public int ReadRGCTXIndex() => ReadInt32();
+    public int ReadStringIndex() => ReadInt32();
+    public int ReadStringLiteralIndex() => ReadInt32();
+    public int ReadTypeDefinitionIndex() => ReadIndex(TypeDefinitionIndexSize);
+    public int ReadTypeIndex() => ReadIndex(TypeIndexSize);
+    public int ReadVTableIndex() => ReadInt32();
+
+    private int ReadIndex(int indexSize)
+    {
+        switch (indexSize)
+        {
+            case sizeof(byte):
+                {
+                    var value = ReadByte();
+                    return value is byte.MaxValue ? -1 : value;
+                }
+            case sizeof(ushort):
+                {
+                    var value = ReadUInt16();
+                    return value is ushort.MaxValue ? -1 : value;
+                }
+            case sizeof(int):
+                {
+                    return ReadInt32();
+                }
+            default:
+                // Should never happen
+                Debug.Fail(null);
+                return default;
+        }
+    }
+
+    private static int GetIndexSize(int elementCount)
+    {
+        return elementCount switch
+        {
+            <= byte.MaxValue => sizeof(byte),
+            <= ushort.MaxValue => sizeof(ushort),
+            _ => sizeof(int)
+        };
     }
 
     public string ReadStringToNull(ulong offset) => ReadStringToNull((long)offset);

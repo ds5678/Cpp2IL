@@ -30,24 +30,24 @@ public class Il2CppImageDefinition : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        nameIndex = reader.ReadInt32();
-        assemblyIndex = reader.ReadInt32();
+        nameIndex = reader.ReadStringIndex();
+        assemblyIndex = reader.ReadAssemblyIndex();
 
-        firstTypeIndex = reader.ReadInt32();
+        firstTypeIndex = reader.ReadTypeDefinitionIndex();
         typeCount = reader.ReadUInt32();
 
         if (IsAtLeast(24f))
         {
-            exportedTypeStart = reader.ReadInt32();
+            exportedTypeStart = reader.ReadTypeDefinitionIndex();
             exportedTypeCount = reader.ReadUInt32();
         }
 
-        entryPointIndex = reader.ReadInt32();
+        entryPointIndex = reader.ReadMethodIndex();
         token = reader.ReadUInt32();
 
         if (IsAtLeast(24.1f))
         {
-            customAttributeStart = reader.ReadInt32();
+            customAttributeStart = reader.ReadCustomAttributeIndex();
             customAttributeCount = reader.ReadUInt32();
         }
     }

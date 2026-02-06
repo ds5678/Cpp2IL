@@ -10,6 +10,6 @@ public class Il2CppStringLiteral : ReadableClass
     {
         if (IsLessThan(35))
             length = reader.ReadUInt32();
-        dataIndex = reader.ReadInt32();
+        dataIndex = reader.ReadStringLiteralIndex();
     }
 }

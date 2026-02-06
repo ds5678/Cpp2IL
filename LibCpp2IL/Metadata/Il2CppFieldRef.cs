@@ -18,7 +18,7 @@ public class Il2CppFieldRef : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        typeIndex = reader.ReadInt32();
-        fieldIndex = reader.ReadInt32();
+        typeIndex = reader.ReadTypeIndex();
+        fieldIndex = reader.ReadFieldIndex();
     }
 }

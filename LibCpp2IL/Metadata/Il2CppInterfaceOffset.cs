@@ -16,7 +16,7 @@ public class Il2CppInterfaceOffset : ReadableClass
 
     public override void Read(ClassReadingBinaryReader reader)
     {
-        typeIndex = reader.ReadInt32();
+        typeIndex = reader.ReadTypeIndex();
         offset = reader.ReadInt32();
     }
 }
