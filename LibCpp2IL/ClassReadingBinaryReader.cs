@@ -423,7 +423,7 @@ public abstract class ClassReadingBinaryReader : EndianAwareBinaryReader
                 rawBytes = BitConverter.GetBytes(word);
             }
 
-            if (ShouldReverseArrays)
+            if (BitConverter.IsLittleEndian != IsLittleEndian)
                 rawBytes = rawBytes.Reverse();
 
             if (position > _memoryStream.Length)
