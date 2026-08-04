@@ -9,7 +9,7 @@
         <Authors>Samboy063</Authors>
         <Copyright>Copyright © Samboy063 2019-2026</Copyright>
         <Company>Samboy063</Company>
-        <VersionPrefix>2022.1.0</VersionPrefix>
+        <VersionPrefix>1.0.9</VersionPrefix>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
