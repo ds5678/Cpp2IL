@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Text;
 using LibCpp2IL.BinaryStructures;
 using LibCpp2IL.Metadata;
@@ -7,6 +7,7 @@ namespace LibCpp2IL;
 
 public class Cpp2IlMethodRef(Il2CppMethodSpec methodSpec)
 {
+    public Il2CppMethodSpec MethodSpec => methodSpec;
     public Il2CppTypeDefinition DeclaringType => BaseMethod.DeclaringType!;
     public Il2CppType[] TypeGenericParams => methodSpec.GenericClassParams;
     public Il2CppMethodDefinition BaseMethod => methodSpec.MethodDefinition!;

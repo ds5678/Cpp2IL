@@ -41,6 +41,7 @@ public class Cpp2IlCorePlugin : Cpp2IlPlugin
 
         Logger.VerboseNewline("\tRegistering built-in output formats...", "Core Plugin");
 
+        OutputFormatRegistry.Register<DisassemblyOutputFormat>();
         OutputFormatRegistry.Register<AsmResolverDllOutputFormatLegacy>();
         OutputFormatRegistry.Register<AsmResolverDllOutputFormatDefault>();
         OutputFormatRegistry.Register<AsmResolverDllOutputFormatEmpty>();
